@@ -1,6 +1,8 @@
-# 🎁 Sorteos de Instagram
+<p align="center"><img src="assets/logo-mmc26.png" alt="Media Maratón de Cúcuta 2026" width="360"></p>
 
-App web para hacer sorteos con los comentarios de una publicación de Instagram. **Sin base de datos y sin servidor**: todo corre en el navegador.
+# Sorteos en Instagram · MMC26
+
+App web de la **Media Maratón de Cúcuta 2026** para hacer sorteos con los comentarios de una publicación de Instagram. **Sin base de datos y sin servidor**: todo corre en el navegador.
 
 ## Funciones
 
@@ -35,11 +37,18 @@ La URL de la publicación y la cuenta dueña se rellenan solas, y esa cuenta se 
 
 Usa la API interna de la web de Instagram (no oficial), con pausas entre consultas. Si Instagram la cambia, sólo hay que ajustar `js/bookmarklet.js`. Úsalo con tus propias publicaciones o con permiso de la cuenta.
 
+## Personalizar la marca
+
+- `js/brand.js`: nombre del evento, colores del PDF y del confeti, y el logo incrustado para el PDF.
+- `css/styles.css`: colores de la web (variables `--brand-*` al inicio).
+- `assets/`: logo de la web (`logo-mmc26.png`) e ícono de la pestaña (`favicon.png`).
+
 ## Estructura
 
 ```
 index.html              Interfaz
 css/styles.css          Estilos
+js/brand.js             Identidad del evento (nombre, colores, logo para el PDF)
 js/parser.js            Extracción de usuarios de texto, CSV y JSON
 js/bookmarklet.js       Extractor de comentarios que corre en instagram.com
 js/instagram-api.js     Cliente opcional de la Graph API de Instagram
@@ -47,6 +56,7 @@ js/draw.js              Azar, selección sin repetición, huella y sonidos
 js/pdf.js               Generación del acta en PDF
 js/app.js               Lógica de la interfaz y animación del sorteo
 js/vendor/              Librerías de terceros
+assets/                 Logo e ícono
 ```
 
 ## Notas

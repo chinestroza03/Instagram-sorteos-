@@ -32,8 +32,8 @@ function instagramCommentsExtractor() {
   // ---------- Panel flotante ----------
   const box = document.createElement('div');
   box.style.cssText = 'position:fixed;right:20px;bottom:20px;z-index:2147483647;width:330px;max-width:calc(100vw - 40px);'
-    + 'background:#191624;color:#f3f1fa;border-radius:14px;padding:16px;font:14px/1.45 system-ui,sans-serif;'
-    + 'box-shadow:0 10px 40px rgba(0,0,0,.5);border:2px solid #d6249f';
+    + 'background:#0b2416;color:#f2f8ef;border-radius:14px;padding:16px;font:14px/1.45 system-ui,sans-serif;'
+    + 'box-shadow:0 10px 40px rgba(0,0,0,.5);border:2px solid #058c46';
   document.body.appendChild(box);
 
   const btnCss = 'border:none;border-radius:8px;padding:8px 12px;font:600 13px system-ui;cursor:pointer;margin:8px 6px 0 0;';
@@ -41,15 +41,15 @@ function instagramCommentsExtractor() {
     box.textContent = '';
     const h = document.createElement('div');
     h.style.cssText = 'font-weight:700;font-size:15px;margin-bottom:4px';
-    h.textContent = '🎁 ' + title;
+    h.textContent = '🏃 MMC26 · ' + title;
     const p = document.createElement('div');
-    p.style.cssText = 'color:#a49fb8;white-space:pre-line';
+    p.style.cssText = 'color:#b9d2bf;white-space:pre-line';
     p.textContent = detail;
     box.append(h, p);
     (buttons || []).forEach(([label, onClick, primary]) => {
       const b = document.createElement('button');
       b.textContent = label;
-      b.style.cssText = btnCss + (primary ? 'background:linear-gradient(45deg,#fd5949,#d6249f,#833ab4);color:#fff' : 'background:#322c47;color:#f3f1fa');
+      b.style.cssText = btnCss + (primary ? 'background:linear-gradient(45deg,#0a9e50,#058c46,#006837);color:#fff' : 'background:#1d4a2e;color:#f2f8ef');
       b.onclick = onClick;
       box.appendChild(b);
     });
@@ -218,7 +218,7 @@ function instagramCommentsExtractor() {
     };
     render(
       result.incomplete ? 'Extracción detenida' : '¡Listo!',
-      `${result.comments.length} comentarios de ${users} personas.\nCópialos y pégalos en la app de sorteos (pestaña “Extractor automático”), o descarga el archivo.`,
+      `${result.comments.length} comentarios de ${users} personas.\nCópialos y pégalos en la app de sorteos MMC26 (pestaña “Extractor automático”), o descarga el archivo.`,
       [['📋 Copiar resultado', copy, true], ['⬇ Descargar', download], ['Cerrar', close]],
     );
   }).catch((e) => {

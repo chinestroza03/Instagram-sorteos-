@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Sorteos de Instagram</title>
-  <meta name="description" content="Extrae participantes de los comentarios de Instagram, haz el sorteo con suspenso y descarga el acta en PDF.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+  <title>Sorteos MMC26 · Media Maratón de Cúcuta</title>
+  <meta name="description" content="Sorteos en Instagram de la Media Maratón de Cúcuta 2026: extrae participantes de los comentarios, sortea con suspenso y descarga el acta en PDF.">
+  <meta name="theme-color" content="#058c46">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
   <header class="site-header">
     <div class="wrap header-inner">
       <div class="brand">
-        <span class="brand-logo">🎁</span>
+        <img class="brand-logo" src="assets/logo-mmc26.png" alt="Media Maratón de Cúcuta 2026 (MMC26)">
         <div>
-          <h1>Sorteos de Instagram</h1>
-          <p>Extrae participantes de los comentarios, sortea con suspenso y descarga el acta en PDF.</p>
+          <h1>Sorteos en Instagram</h1>
+          <p>Media Maratón de Cúcuta 2026 · Extrae participantes de los comentarios, sortea con suspenso y descarga el acta en PDF.</p>
         </div>
       </div>
       <span class="badge-local" title="Todo se procesa en tu navegador. No hay base de datos ni servidor.">🔒 100% en tu navegador</span>
@@ -28,7 +29,7 @@
       <h2><span class="step">1</span> Datos del sorteo</h2>
       <div class="grid-3">
         <label>Premio / nombre del sorteo
-          <input type="text" id="prize" placeholder="Ej: Kit de productos + bono de $100.000">
+          <input type="text" id="prize" placeholder="Ej: Inscripción gratis a la MMC26 + kit de corredor">
         </label>
         <label>Cuenta organizadora
           <input type="text" id="organizer" placeholder="@tucuenta">
@@ -57,7 +58,7 @@
             <b>Instala el botón (sólo la primera vez).</b> Arrástralo a la barra de marcadores.
             Si no ves la barra, muéstrala con <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> en Mac).
             <div class="row bm-row">
-              <a class="bookmarklet" id="bookmarklet" href="#" draggable="true">🎁 Extraer comentarios</a>
+              <a class="bookmarklet" id="bookmarklet" href="#" draggable="true">🏃 Extraer comentarios</a>
               <button class="btn btn-ghost" id="btnCopyBookmarklet" type="button">Copiar código</button>
             </div>
             <details class="help">
@@ -235,13 +236,14 @@
   </main>
 
   <footer class="wrap site-footer">
-    Sin base de datos: nada sale de tu navegador (salvo las consultas a Meta si usas la API). Recargar la página borra los datos.
+    Media Maratón de Cúcuta 2026 · Sin base de datos: nada sale de tu navegador (salvo las consultas a Meta si usas la API). Recargar la página borra los datos.
   </footer>
 
   <!-- Pantalla del sorteo -->
   <div class="overlay hidden" id="overlay" aria-live="polite">
     <canvas id="confettiCanvas"></canvas>
     <div class="stage">
+      <img class="stage-logo" src="assets/logo-mmc26.png" alt="MMC26">
       <p class="stage-label" id="stageLabel">Ganador #1</p>
       <div class="countdown hidden" id="countdown">3</div>
       <div class="reel" id="reel"><span id="reelName">@…</span></div>
@@ -257,6 +259,7 @@
   <script src="js/vendor/jspdf.umd.min.js"></script>
   <script src="js/vendor/jspdf.plugin.autotable.min.js"></script>
   <script src="js/vendor/confetti.browser.js"></script>
+  <script src="js/brand.js"></script>
   <script src="js/parser.js"></script>
   <script src="js/bookmarklet.js"></script>
   <script src="js/instagram-api.js"></script>

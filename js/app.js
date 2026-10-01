@@ -353,7 +353,7 @@
     if (!window.confetti) return () => {};
     const fire = window.confetti.create($('confettiCanvas'), { resize: true, useWorker: false });
     return (big) => {
-      const colors = ['#fdcf58', '#fd5949', '#d6249f', '#833ab4', '#ffffff'];
+      const colors = (typeof BRAND !== 'undefined' && BRAND.confetti) || ['#fdcf58', '#fd5949', '#d6249f', '#833ab4', '#ffffff'];
       fire({ particleCount: big ? 220 : 120, spread: big ? 120 : 80, origin: { y: 0.55 }, colors, startVelocity: 45 });
       if (big) {
         setTimeout(() => fire({ particleCount: 90, angle: 60, spread: 70, origin: { x: 0, y: 0.7 }, colors }), 250);
@@ -510,7 +510,7 @@
   $('btnCopy').addEventListener('click', async () => {
     const r = state.result;
     if (!r) return;
-    const lines = [`🎁 ${r.prize || 'Sorteo'} — resultados`, ''];
+    const lines = [`🏃 ${r.prize || 'Sorteo'} — resultados${typeof BRAND !== 'undefined' ? ` · ${BRAND.name}` : ''}`, ''];
     r.winners.forEach((p, i) => lines.push(`🏆 ${r.winners.length > 1 ? `Ganador #${i + 1}: ` : 'Ganador: '}@${p.username}`));
     r.alternates.forEach((p, i) => lines.push(`Suplente #${i + 1}: @${p.username}`));
     lines.push('', `Participantes válidos: ${r.participants.length}`);
