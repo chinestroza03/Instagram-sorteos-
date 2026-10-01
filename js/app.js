@@ -35,9 +35,82 @@
     $('step-list').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
+  /** Toma la URL y la cuenta dueña del resultado del extractor para rellenar los datos del sorteo. */
+  function applyExtractorMeta(data) {
+    if (!data || data.source !== 'sorteos-instagram-extractor') return '';
+    if (data.permalink && !$('postUrl').value) $('postUrl').value = data.permalink;
+    const notes = [];
+    if (data.post_owner) {
+      if (!$('organizer').value) $('organizer').value = '@' + data.post_owner;
+      if (!$('fExclude').value) {
+        $('fExclude').value = '@' + data.post_owner;
+        notes.push(`se excluyó a @${data.post_owner} (dueño de la publicación)`);
+      }
+    }
+    if (data.incomplete) notes.push('⚠ la extracción se detuvo antes de terminar');
+    return notes.length ? ` (${notes.join('; ')})` : '';
+  }
+
+  /** Carga texto JSON (del extractor, la API o una exportación). Devuelve false si no es JSON. */
+  function importJsonText(text, hintEl, label) {
+    const trimmed = text.trim();
+    if (!/^[[{]/.test(trimmed)) return false;
+    let data;
+    try {
+      data = JSON.parse(trimmed);
+    } catch (e) {
+      setHint(hintEl, 'El texto parece JSON pero está incompleto. Vuelve a copiar el resultado completo.', 'error');
+      return true;
+    }
+    const note = applyExtractorMeta(data);
+    addComments(Parser.parseFile('resultado.json', trimmed), hintEl, label);
+    if (note && hintEl.classList.contains('ok')) hintEl.textContent += note;
+    return true;
+  }
+
+  // ---------- Extractor automático (bookmarklet) ----------
+  const bm = $('bookmarklet');
+  bm.href = Bookmarklet.href;
+  bm.addEventListener('click', (e) => {
+    e.preventDefault();
+    setHint($('autoHint'), 'No lo pulses aquí: arrástralo a la barra de marcadores y úsalo en la publicación de Instagram.', 'error');
+  });
+
+  $('btnCopyBookmarklet').addEventListener('click', async () => {
+    try {
+      await navigator.clipboard.writeText(Bookmarklet.href);
+      $('btnCopyBookmarklet').textContent = '✔ Código copiado';
+    } catch {
+      prompt('Copia este código y pégalo como URL del marcador:', Bookmarklet.href);
+    }
+    setTimeout(() => { $('btnCopyBookmarklet').textContent = 'Copiar código'; }, 2000);
+  });
+
+  function loadAuto() {
+    const text = $('autoInput').value;
+    if (!text.trim()) return setHint($('autoHint'), 'Pega primero el resultado del extractor.', 'error');
+    if (!importJsonText(text, $('autoHint'), 'Extractor')) {
+      setHint($('autoHint'), 'Esto no parece el resultado del extractor. Para texto copiado de Instagram usa la pestaña “Pegar comentarios”.', 'error');
+      return;
+    }
+    if ($('autoHint').classList.contains('ok')) $('autoInput').value = '';
+  }
+  $('btnAutoLoad').addEventListener('click', loadAuto);
+  $('btnAutoClipboard').addEventListener('click', async () => {
+    try {
+      $('autoInput').value = await navigator.clipboard.readText();
+    } catch {
+      setHint($('autoHint'), 'El navegador no permitió leer el portapapeles. Pega con Ctrl+V en el recuadro.', 'error');
+      $('autoInput').focus();
+      return;
+    }
+    loadAuto();
+  });
+
   // ---------- Pegar ----------
   $('btnExtract').addEventListener('click', () => {
     const text = $('pasteInput').value;
+    if (importJsonText(text, $('pasteHint'), 'JSON pegado')) return;
     const mode = $('pasteMode').value;
     const list = mode === 'list' ? Parser.parseUserList(text)
       : mode === 'mentions' ? Parser.parseMentions(text)
@@ -63,7 +136,9 @@
     let all = [];
     for (const f of files) {
       try {
-        all = all.concat(Parser.parseFile(f.name, await f.text()));
+        const content = await f.text();
+        if (/^\s*[[{]/.test(content)) { try { applyExtractorMeta(JSON.parse(content)); } catch { /* lo reporta parseFile */ } }
+        all = all.concat(Parser.parseFile(f.name, content));
       } catch (e) {
         setHint($('fileHint'), `Error leyendo ${f.name}: ${e.message}`, 'error');
         return;

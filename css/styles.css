@@ -126,6 +126,16 @@ details.help { background: var(--surface-2); border-radius: 10px; padding: 10px 
 details.help summary { cursor: pointer; font-weight: 600; color: var(--accent-3); }
 details.help ol, details.help ul { margin: 8px 0; padding-left: 20px; }
 
+ol.steps { padding-left: 22px; margin: 12px 0; }
+ol.steps > li { margin-bottom: 14px; }
+ol.steps > li::marker { color: var(--accent-3); font-weight: 700; }
+.bm-row { margin: 10px 0; }
+.bookmarklet {
+  display: inline-block; padding: 10px 18px; border-radius: 999px; background: var(--gradient); color: #fff;
+  font-weight: 700; text-decoration: none; cursor: grab; box-shadow: 0 4px 18px rgba(214, 36, 159, .35);
+}
+.bookmarklet:active { cursor: grabbing; }
+
 .dropzone {
   border: 2px dashed var(--border); border-radius: 12px; padding: 34px 16px; text-align: center;
   cursor: pointer; color: var(--text); margin: 12px 0; align-items: center;

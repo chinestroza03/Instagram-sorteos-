@@ -44,12 +44,44 @@
       <h2><span class="step">2</span> Cargar participantes</h2>
 
       <div class="tabs" role="tablist">
-        <button class="tab active" data-tab="paste" role="tab">📋 Pegar comentarios</button>
+        <button class="tab active" data-tab="auto" role="tab">⚡ Extractor automático</button>
+        <button class="tab" data-tab="paste" role="tab">📋 Pegar comentarios</button>
         <button class="tab" data-tab="file" role="tab">📁 Importar archivo</button>
         <button class="tab" data-tab="api" role="tab">🔌 API de Instagram</button>
       </div>
 
-      <div class="tab-panel active" id="tab-paste">
+      <div class="tab-panel active" id="tab-auto">
+        <p class="muted">Extrae <b>todos</b> los comentarios en segundos con un botón que guardas en tus marcadores. Funciona en el navegador del computador (Chrome, Edge, Firefox, Safari) con tu sesión de Instagram iniciada.</p>
+        <ol class="steps">
+          <li>
+            <b>Instala el botón (sólo la primera vez).</b> Arrástralo a la barra de marcadores.
+            Si no ves la barra, muéstrala con <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> (<kbd>⌘</kbd>+<kbd>Shift</kbd>+<kbd>B</kbd> en Mac).
+            <div class="row bm-row">
+              <a class="bookmarklet" id="bookmarklet" href="#" draggable="true">🎁 Extraer comentarios</a>
+              <button class="btn btn-ghost" id="btnCopyBookmarklet" type="button">Copiar código</button>
+            </div>
+            <details class="help">
+              <summary>¿No puedes arrastrarlo?</summary>
+              <ol>
+                <li>Pulsa <b>“Copiar código”</b>.</li>
+                <li>Crea un marcador nuevo (<kbd>Ctrl</kbd>+<kbd>D</kbd> en cualquier página) y edítalo.</li>
+                <li>Ponle de nombre “Extraer comentarios” y en el campo <b>URL</b> pega el código copiado.</li>
+              </ol>
+            </details>
+          </li>
+          <li><b>Abre la publicación del sorteo</b> en <a href="https://www.instagram.com/" target="_blank" rel="noopener">instagram.com</a> y pulsa el marcador. Aparecerá un recuadro que muestra el avance.</li>
+          <li><b>Pulsa “Copiar resultado”</b> en ese recuadro, vuelve aquí y pégalo abajo (o importa el archivo descargado en la pestaña “Importar archivo”).</li>
+        </ol>
+        <textarea id="autoInput" rows="4" placeholder="Pega aquí el resultado del extractor…"></textarea>
+        <div class="row actions">
+          <button class="btn btn-primary" id="btnAutoLoad">Cargar comentarios</button>
+          <button class="btn" id="btnAutoClipboard">📥 Pegar del portapapeles</button>
+          <span class="hint" id="autoHint"></span>
+        </div>
+        <p class="hint">El extractor usa la API interna de la web de Instagram y hace pausas entre consultas para no saturarla. Úsalo sólo con tus propias publicaciones o con permiso de la cuenta.</p>
+      </div>
+
+      <div class="tab-panel" id="tab-paste">
         <details class="help">
           <summary>¿Cómo copio los comentarios?</summary>
           <ol>
@@ -226,6 +258,7 @@
   <script src="js/vendor/jspdf.plugin.autotable.min.js"></script>
   <script src="js/vendor/confetti.browser.js"></script>
   <script src="js/parser.js"></script>
+  <script src="js/bookmarklet.js"></script>
   <script src="js/instagram-api.js"></script>
   <script src="js/draw.js"></script>
   <script src="js/pdf.js"></script>
