@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sorteos de Instagram</title>
+  <meta name="description" content="Extrae participantes de los comentarios de Instagram, haz el sorteo con suspenso y descarga el acta en PDF.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎁</text></svg>">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="wrap header-inner">
+      <div class="brand">
+        <span class="brand-logo">🎁</span>
+        <div>
+          <h1>Sorteos de Instagram</h1>
+          <p>Extrae participantes de los comentarios, sortea con suspenso y descarga el acta en PDF.</p>
+        </div>
+      </div>
+      <span class="badge-local" title="Todo se procesa en tu navegador. No hay base de datos ni servidor.">🔒 100% en tu navegador</span>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Paso 1 -->
+    <section class="card" id="step-info">
+      <h2><span class="step">1</span> Datos del sorteo</h2>
+      <div class="grid-3">
+        <label>Premio / nombre del sorteo
+          <input type="text" id="prize" placeholder="Ej: Kit de productos + bono de $100.000">
+        </label>
+        <label>Cuenta organizadora
+          <input type="text" id="organizer" placeholder="@tucuenta">
+        </label>
+        <label>URL de la publicación
+          <input type="url" id="postUrl" placeholder="https://www.instagram.com/p/...">
+        </label>
+      </div>
+    </section>
+
+    <!-- Paso 2 -->
+    <section class="card" id="step-load">
+      <h2><span class="step">2</span> Cargar participantes</h2>
+
+      <div class="tabs" role="tablist">
+        <button class="tab active" data-tab="paste" role="tab">📋 Pegar comentarios</button>
+        <button class="tab" data-tab="file" role="tab">📁 Importar archivo</button>
+        <button class="tab" data-tab="api" role="tab">🔌 API de Instagram</button>
+      </div>
+
+      <div class="tab-panel active" id="tab-paste">
+        <details class="help">
+          <summary>¿Cómo copio los comentarios?</summary>
+          <ol>
+            <li>Abre la publicación en <b>instagram.com</b> desde el computador.</li>
+            <li>Pulsa el botón <b>“+”</b> / “Cargar más comentarios” hasta que se vean todos.</li>
+            <li>Selecciona todo el bloque de comentarios (o usa <kbd>Ctrl</kbd>+<kbd>A</kbd>) y cópialo con <kbd>Ctrl</kbd>+<kbd>C</kbd>.</li>
+            <li>Pégalo abajo. La app reconoce el usuario de cada comentario e ignora textos como “Responder”, “3 sem” o “12 Me gusta”.</li>
+          </ol>
+          <p>¿Tienes una lista simple? Elige “Lista de usuarios” y pega un usuario por línea.</p>
+        </details>
+        <div class="row">
+          <label class="grow">Formato del texto
+            <select id="pasteMode">
+              <option value="comments">Comentarios copiados de Instagram (detección automática)</option>
+              <option value="list">Lista de usuarios (uno por línea o separados por comas)</option>
+              <option value="mentions">Extraer todas las @menciones del texto</option>
+            </select>
+          </label>
+        </div>
+        <textarea id="pasteInput" rows="10" placeholder="Pega aquí los comentarios…"></textarea>
+        <div class="row actions">
+          <button class="btn btn-primary" id="btnExtract">Extraer participantes</button>
+          <button class="btn btn-ghost" id="btnSample">Cargar ejemplo</button>
+          <span class="hint" id="pasteHint"></span>
+        </div>
+      </div>
+
+      <div class="tab-panel" id="tab-file">
+        <p class="muted">Acepta <b>.csv</b>, <b>.json</b> o <b>.txt</b>. Sirve para exportaciones de herramientas de comentarios o la respuesta JSON de la API. Se detectan columnas como <code>username</code>, <code>usuario</code>, <code>autor</code> y <code>text</code>, <code>comentario</code>.</p>
+        <label class="dropzone" id="dropzone">
+          <input type="file" id="fileInput" accept=".csv,.json,.txt,text/csv,application/json,text/plain" multiple>
+          <span>📂 Arrastra un archivo aquí o <u>haz clic para elegirlo</u></span>
+        </label>
+        <span class="hint" id="fileHint"></span>
+      </div>
+
+      <div class="tab-panel" id="tab-api">
+        <details class="help">
+          <summary>¿Qué necesito para usar la API?</summary>
+          <ul>
+            <li>Una cuenta de Instagram <b>profesional</b> (empresa o creador).</li>
+            <li>Un <b>token de acceso</b> con permisos para leer comentarios: de la API de Instagram con inicio de sesión de Instagram (empieza por <code>IG…</code>) o de la Graph API de Facebook (<code>instagram_basic</code>, <code>instagram_manage_comments</code>, <code>pages_show_list</code>).</li>
+            <li>Puedes generar uno en el <a href="https://developers.facebook.com/tools/explorer/" target="_blank" rel="noopener">Explorador de la Graph API</a>.</li>
+            <li>El token sólo se usa en esta pestaña para consultar a Meta y no se guarda en ningún lado.</li>
+          </ul>
+        </details>
+        <div class="row">
+          <label class="grow">Token de acceso
+            <input type="password" id="apiToken" placeholder="EAAB… o IGQ…" autocomplete="off">
+          </label>
+          <button class="btn btn-primary self-end" id="btnApiConnect">Conectar</button>
+        </div>
+        <div class="row hidden" id="apiAccountRow">
+          <label class="grow">Cuenta de Instagram
+            <select id="apiAccount"></select>
+          </label>
+          <button class="btn self-end" id="btnApiMedia">Ver publicaciones</button>
+        </div>
+        <div class="hidden" id="apiMediaRow">
+          <p class="muted">Elige la publicación del sorteo (si pegaste la URL en el paso 1, se selecciona sola):</p>
+          <div class="media-grid" id="apiMedia"></div>
+          <div class="row actions">
+            <label class="check"><input type="checkbox" id="apiReplies" checked> Incluir respuestas a comentarios</label>
+            <button class="btn btn-primary" id="btnApiComments" disabled>Descargar comentarios</button>
+          </div>
+        </div>
+        <span class="hint" id="apiHint"></span>
+      </div>
+    </section>
+
+    <!-- Paso 3 -->
+    <section class="card" id="step-list">
+      <h2><span class="step">3</span> Participantes y reglas</h2>
+
+      <div class="grid-4">
+        <label>Excluir cuentas
+          <input type="text" id="fExclude" placeholder="@organizador, @marca">
+        </label>
+        <label>Mínimo de amigos etiquetados
+          <input type="number" id="fMinMentions" min="0" value="0">
+        </label>
+        <label>Palabra o #hashtag obligatorio
+          <input type="text" id="fKeyword" placeholder="Ej: #QuieroGanar">
+        </label>
+        <label>Participaciones
+          <select id="fEntries">
+            <option value="unique">1 oportunidad por persona</option>
+            <option value="per-comment">1 oportunidad por comentario</option>
+          </select>
+        </label>
+      </div>
+      <p class="hint" id="filterNote"></p>
+
+      <div class="stats" id="stats">
+        <div class="stat"><span id="statComments">0</span><small>comentarios</small></div>
+        <div class="stat"><span id="statUsers">0</span><small>personas únicas</small></div>
+        <div class="stat stat-accent"><span id="statEligible">0</span><small>participantes válidos</small></div>
+        <div class="stat"><span id="statTickets">0</span><small>oportunidades totales</small></div>
+      </div>
+
+      <div class="row actions">
+        <input type="search" id="search" class="grow" placeholder="Buscar usuario…">
+        <button class="btn btn-ghost" id="btnCsv">⬇ CSV</button>
+        <button class="btn btn-ghost danger" id="btnClear">Vaciar lista</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="ptable">
+          <thead>
+            <tr><th>#</th><th>Usuario</th><th class="num">Comentarios</th><th class="num">Etiquetas</th><th>Estado</th><th class="num">Incluir</th></tr>
+          </thead>
+          <tbody id="ptbody">
+            <tr class="empty"><td colspan="6">Aún no hay participantes. Cárgalos en el paso 2.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Paso 4 -->
+    <section class="card" id="step-draw">
+      <h2><span class="step">4</span> Sorteo</h2>
+      <div class="grid-4">
+        <label>Número de ganadores
+          <input type="number" id="nWinners" min="1" value="1">
+        </label>
+        <label>Suplentes
+          <input type="number" id="nAlternates" min="0" value="0">
+        </label>
+        <label><span>Suspenso: <b id="suspenseLabel">6 s</b> por ganador</span>
+          <input type="range" id="suspense" min="2" max="15" value="6">
+        </label>
+        <label class="check self-end"><input type="checkbox" id="sound" checked> Sonido</label>
+      </div>
+      <p class="hint">Los ganadores nunca se repiten: cada persona sale como máximo una vez, aunque tenga varios comentarios. El azar usa el generador criptográfico del navegador.</p>
+      <div class="row actions">
+        <button class="btn btn-primary btn-xl" id="btnDraw">🎲 ¡Iniciar sorteo!</button>
+        <span class="hint error" id="drawHint"></span>
+      </div>
+    </section>
+
+    <!-- Paso 5 -->
+    <section class="card hidden" id="step-result">
+      <h2><span class="step">5</span> Resultado</h2>
+      <div id="resultBody"></div>
+      <div class="row actions">
+        <button class="btn btn-primary" id="btnPdf">📄 Descargar acta en PDF</button>
+        <button class="btn" id="btnCopy">📋 Copiar ganadores</button>
+        <button class="btn btn-ghost" id="btnRedo">🔁 Hacer otro sorteo</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="wrap site-footer">
+    Sin base de datos: nada sale de tu navegador (salvo las consultas a Meta si usas la API). Recargar la página borra los datos.
+  </footer>
+
+  <!-- Pantalla del sorteo -->
+  <div class="overlay hidden" id="overlay" aria-live="polite">
+    <canvas id="confettiCanvas"></canvas>
+    <div class="stage">
+      <p class="stage-label" id="stageLabel">Ganador #1</p>
+      <div class="countdown hidden" id="countdown">3</div>
+      <div class="reel" id="reel"><span id="reelName">@…</span></div>
+      <p class="stage-sub" id="stageSub">&nbsp;</p>
+      <div class="stage-winners" id="stageWinners"></div>
+      <div class="stage-actions">
+        <button class="btn btn-primary btn-xl hidden" id="btnNext">Siguiente ➜</button>
+        <button class="btn btn-xl hidden" id="btnFinish">Ver resultados</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/vendor/jspdf.umd.min.js"></script>
+  <script src="js/vendor/jspdf.plugin.autotable.min.js"></script>
+  <script src="js/vendor/confetti.browser.js"></script>
+  <script src="js/parser.js"></script>
+  <script src="js/instagram-api.js"></script>
+  <script src="js/draw.js"></script>
+  <script src="js/pdf.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
