@@ -80,7 +80,7 @@ Tabla purchases
 Tabla raffles   (sorteos)
   id, user_id, codigo_verificacion (único, 10 caracteres, p. ej. "K7P2-QX9M"),
   titulo_premio, cuenta_organizadora, url_publicacion,
-  fuente ('extractor'|'pegar'|'archivo'|'api'),
+  fuente ('extractor'|'pegar'|'archivo'),
   reglas (JSON: excluidas, min_menciones, palabra_clave, modalidad 'persona'|'comentario',
           excluidos_manual),
   total_comentarios, total_personas, total_validos, total_oportunidades,
@@ -108,7 +108,7 @@ botón de sortear).
 
 PASO 1 – Datos: premio / nombre del sorteo, cuenta organizadora (@), URL de la publicación.
 
-PASO 2 – Cargar participantes (4 pestañas):
+PASO 2 – Cargar participantes (3 pestañas):
  (a) "⚡ Extractor automático" (recomendado). Mostrar un botón-marcador (bookmarklet) para
      arrastrar a la barra de marcadores + botón "Copiar código" (por si el navegador no deja
      arrastrar) + instrucciones con imágenes: 1) arrastra el botón, 2) abre tu publicación en
@@ -147,11 +147,10 @@ PASO 2 – Cargar participantes (4 pestañas):
        (username, user, usuario, autor, author, owner, handle) y texto
        (text, comment, comentario, message, mensaje); sin encabezado → col1 usuario, col2 texto.
        JSON: recorrer recursivamente (incluye data, replies.data, comments.data).
- (d) "🔌 API de Instagram" (avanzado): token de cuenta profesional; si empieza por "IG" usar
-       graph.instagram.com/v21.0/me, si no graph.facebook.com/v21.0/me/accounts
-       {instagram_business_account}. Listar hasta 100 publicaciones en cuadrícula (miniatura,
-       nº comentarios, texto) y descargar todos los comentarios con paginación.
-       EL TOKEN NUNCA SE GUARDA en la base de datos ni en el servidor.
+ IMPORTANTE: NO usar la API oficial de Instagram/Meta (Graph API), ni tokens, ni apps de
+ Meta, ni pedir la contraseña de Instagram. La app no hace ninguna llamada a Instagram desde
+ su servidor: los comentarios se obtienen SIEMPRE en el navegador del usuario con el
+ extractor (a), o pegando/importando (b, c). El servidor sólo recibe la lista ya procesada.
 
 PASO 3 – Participantes y reglas:
  - Agrupar comentarios por usuario (minúsculas): textos[], menciones distintas (sin contarse
@@ -271,6 +270,7 @@ No mostrar datos personales del usuario de la app (sólo la cuenta organizadora 
 ==================================================
 - Toda lógica de créditos, sorteo y guardado se ejecuta en el servidor; el navegador sólo
   prepara la lista y anima.
+- Sin integraciones con Instagram/Meta: ni Graph API, ni tokens, ni login con Instagram.
 - Cada usuario sólo puede ver sus sorteos (validar user_id en cada consulta); el admin todo.
 - Validar en servidor: username con ^[a-z0-9._]{1,30}$, oportunidades enteras ≥1,
   ganadores ≥1, ganadores + suplentes ≤ participantes, máximo 100.000 participantes por sorteo.
@@ -288,7 +288,7 @@ No mostrar datos personales del usuario de la app (sólo la cuenta organizadora 
 FAQ: ¿Es gratis? (3 sorteos gratis, luego 10 USD por 10) · ¿Los créditos vencen? (No) ·
 ¿Cuenta como sorteo repetir la animación? (No) · ¿Y hacer otro sorteo con la misma lista? (Sí) ·
 ¿Cómo sé que es justo? (azar criptográfico en servidor, huella SHA-256 y página pública de
-verificación) · ¿Necesito dar mi contraseña de Instagram? (No, nunca) · ¿Funciona en el móvil?
+verificación) · ¿Necesito dar mi contraseña o conectar mi cuenta de Instagram? (No, nunca; el extractor usa la sesión que ya tienes abierta en tu navegador) · ¿Funciona en el móvil?
 (La app sí; el extractor automático requiere navegador de computador; en el móvil usa
 "Pegar comentarios" o "Importar archivo").
 Términos y privacidad básicos: qué datos se guardan (cuenta, sorteos, listas de usuarios de
